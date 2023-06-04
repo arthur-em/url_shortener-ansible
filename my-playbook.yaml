@@ -1,0 +1,52 @@
+---
+- name: Install python and flask dependencies
+  hosts: webserver
+  tasks:
+    - name: Update all packages and the system package cache
+      apt:
+        name: "*"
+        state: latest
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install Python pip and virtual environment packages
+      apt:
+        pkg:
+          - python3-pip
+          - python3-venv
+
+    - name: Create linux user
+      user:
+        name: emmanuel
+        comment: Emmanuel Admin
+        group: admin
+
+- name: Deploy Flask App
+  hosts: webserver
+  become: yes
+  become_user: emmanuel
+  tasks:
+    - name: Create home folder for Flask App
+      file:
+        path: /home/emmanuel/flask_app
+        state: directory
+
+    - name: Unarchive Flask App from local machine
+      unarchive:
+        src: /Users/emmanuel/Python/Flask/url_shortener_archive.tar.gz
+        dest: /home/emmanuel/flask_app
+
+    - name: Install requirements file into virtual env
+      pip:
+        requirements: /home/emmanuel/flask_app/url_shortener/requirements.txt
+        virtualenv: /home/emmanuel/flask_app/url_shortener/venv
+# - name
+
+# - name: install nginx server
+#   apt:
+#     name: nginx
+#     state: latest
+# - name: start nginx server
+#   service:
+#     name: nginx
+#     state: started
