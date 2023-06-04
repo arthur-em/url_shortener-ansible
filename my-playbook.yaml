@@ -13,7 +13,7 @@
       apt:
         pkg:
           - python3-pip
-          - python3-venv
+          - python3-virtualenv
 
     - name: Create linux user
       user:
@@ -35,6 +35,11 @@
       unarchive:
         src: /Users/emmanuel/Python/Flask/url_shortener_archive.tar.gz
         dest: /home/emmanuel/flask_app
+
+    - name: Install virtualenv module
+      pip:
+        name: virtualenv
+        state: latest
 
     - name: Install requirements file into virtual env
       pip:
