@@ -9,16 +9,17 @@
         update_cache: yes
         cache_valid_time: 3600
 
-    - name: Install Python pip and virtual environment packages
+    - name: Install Python pip, virtual environment packages and nginx for later
       apt:
         pkg:
           - python3-pip
           - python3-virtualenv
+          - nginx
 
     - name: Create linux user
       user:
         name: emmanuel
-        comment: Emmanuel Admin
+        comment: Emmanuel Admin User
         group: admin
 
 - name: Deploy Flask App
@@ -33,7 +34,7 @@
 
     - name: Unarchive Flask App from local machine
       unarchive:
-        src: /Users/emmanuel/Python/Flask/url_shortener_archive.tar.gz
+        src: /Users/emmanuel/Python/Flask/url_shortener_archive2.tar.gz
         dest: /home/emmanuel/flask_app
 
     - name: Install virtualenv module
@@ -43,8 +44,22 @@
 
     - name: Install requirements file into virtual env
       pip:
-        requirements: /home/emmanuel/flask_app/url_shortener/requirements.txt
+        requirements: /home/emmanuel/flask_app/url_shortener/requirements2.txt
         virtualenv: /home/emmanuel/flask_app/url_shortener/venv
+
+    - name: Install gunicorn into virtual environment
+      pip:
+        name:
+          - gunicorn
+        virtualenv: /home/emmanuel/flask_app/url_shortener/venv
+
+    # - name: Copy over nginx server block configuration from local machine to remote server
+    #   copy:
+    #     src: /Users/emmanuel/Python/Flask/url_shortener_nginx_config/url_shortener
+    #     dest: /etc/nginx/sites-available/url_shortener
+    #     owner: emmanuel
+    #     group: emmanuel
+    #     mode: "0777"
 # - name
 
 # - name: install nginx server
