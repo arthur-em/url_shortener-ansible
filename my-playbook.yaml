@@ -7,7 +7,7 @@
         name: "*"
         state: latest
         update_cache: yes
-        cache_valid_time: 3600
+        # cache_valid_time: 3600
 
     - name: Install Python pip, virtual environment packages
       apt:
@@ -138,14 +138,3 @@
       become: true
       become_user: root
       become_method: sudo
-# now time to set up Gunicorn
-# - name
-
-# - name: install nginx server
-#   apt:
-#     name: nginx
-#     state: latest
-# - name: start nginx server
-#   service:
-#     name: nginx
-#     state: started
