@@ -110,6 +110,34 @@
       become: true
       become_user: root
       become_method: sudo
+
+    - name: Copy systemd service file with owner and permissions to server
+      copy:
+        src: ~/Python/Flask/url_shortener_gunicorn/url_shortener.service
+        dest: /etc/systemd/system/
+        owner: root
+        group: root
+        mode: "0777"
+      become: true
+      become_user: root
+      become_method: sudo
+
+    - name: Start gunicorn service
+      systemd:
+        name: url_shortener.service
+        state: restarted
+        daemon_reload: true
+      become: true
+      become_user: root
+      become_method: sudo
+
+    - name: Enable gunicorn service
+      systemd:
+        name: url_shortener.service
+        enabled: true
+      become: true
+      become_user: root
+      become_method: sudo
 # now time to set up Gunicorn
 # - name
 
