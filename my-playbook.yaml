@@ -94,7 +94,7 @@
 
     - name: Copy systemd service file with owner and permissions to server
       copy:
-        src: ~/Python/Flask/url_shortener_gunicorn/url_shortener.service
+        src: url_shortener.service
         dest: /etc/systemd/system/
         owner: root
         group: root
