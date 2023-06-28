@@ -35,8 +35,8 @@
       unarchive:
         src: url_shortener_archive2.tar.gz
         dest: /home/emmanuel/flask_app
-      become: yes
-      become_user: emmanuel
+      # become: yes
+      # become_user: emmanuel
 
     - name: Install virtualenv module
       pip:
