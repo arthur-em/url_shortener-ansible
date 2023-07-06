@@ -2,12 +2,12 @@
 - name: Install python and flask dependencies
   become: yes
   hosts: all
-  vars:
-    - db_user: emmanuel
-    - db_pass: url_2023
-    - db_name: flask
-  # vars_files:
-  #   - vars/external_variables.yml
+  # vars:
+  #   - db_user: emmanuel
+  #   - db_pass: url_2023
+  #   - db_name: flask
+  vars_files:
+    - vars/external_variables.yml
 
   tasks:
     - name: Update all packages and the system package cache

@@ -1,5 +1,5 @@
 [webserver]
-64.227.47.33
+159.65.94.25
 
 [webserver:vars]
 ansible_ssh_private_key_file=~/.ssh/digital_ocean
