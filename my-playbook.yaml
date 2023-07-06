@@ -2,20 +2,35 @@
 - name: Install python and flask dependencies
   become: yes
   hosts: all
+  vars:
+    - db_user: emmanuel
+    - db_pass: url_2023
+    - db_name: flask
+  # vars_files:
+  #   - vars/external_variables.yml
+
   tasks:
     - name: Update all packages and the system package cache
       apt:
         name: "*"
         state: latest
         update_cache: yes
-        # cache_valid_time: 3600
+        lock_timeout: 100
+        cache_valid_time: 3600
 
-    - name: Install Python pip, virtual environment packages
+    - name: Install Python pip, virtual environment packages and Mysql database
       apt:
         update_cache: yes
         pkg:
           - python3-pip
           - python3-virtualenv
+          - mysql-server
+          - python3-pymysql
+          - mysql-client
+          - python3-mysqldb
+          - libmysqlclient-dev
+          # - mysql state: present
+          # - mysql-server-core-8.0
 
     - name: Create linux user
       user:
@@ -31,12 +46,44 @@
         group: admin
         mode: "750"
 
+    # MySQL Configuration
+    - name: start and enable mysql service
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: creating mysql user
+      mysql_user:
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        name: "{{db_user}}"
+        password: "{{db_pass}}"
+        priv: "*.*:ALL"
+        host: "localhost"
+        state: present
+
+    - name: Copy mysql credential file to server
+      copy:
+        src: my.cnf
+        dest: /root/.my.cnf
+        owner: root
+        group: root
+        mode: "755"
+
+    - name: creating flask database in mysql
+      mysql_db:
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        name: "{{db_name}}"
+        state: present
+
+    # - name: Restart mysql
+    #   service:
+    #     name: mysql
+    #     state: restarted
     - name: Unarchive Flask App from local machine
       unarchive:
-        src: url_shortener_archive2.tar.gz
+        src: url_shortener_archive5.tar.gz
         dest: /home/emmanuel/flask_app
-      # become: yes
-      # become_user: emmanuel
 
     - name: Install virtualenv module
       pip:
@@ -45,7 +92,7 @@
 
     - name: Install requirements file into virtual env
       pip:
-        requirements: /home/emmanuel/flask_app/url_shortener/requirements2.txt
+        requirements: /home/emmanuel/flask_app/url_shortener/requirements3.txt
         virtualenv: /home/emmanuel/flask_app/url_shortener/venv
 
     - name: Install gunicorn into virtual environment
@@ -106,3 +153,13 @@
         state: restarted
         daemon_reload: true
         enabled: true
+
+    # - name: Initialise the flask database
+    #   shell: |
+    #     source venv/bin/activate
+    #     flask db upgrade
+    #   args:
+    #     chdir: /home/emmanuel/flask_app/url_shortener
+
+    - name: Initialise the flask database
+      script: init_flask.sh
